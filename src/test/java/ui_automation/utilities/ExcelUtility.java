@@ -16,6 +16,21 @@ public class ExcelUtility {
     private static MissingCellPolicy xRow;
 
 
+//      1- Create an object of FileInputStream class to read Excel file
+//          FileInputStream fis = new FileInputStream("C:\\mydata.xlsx");
+//       2- Create object of XSSFWorkbook class
+//          XSSFWorkbook workbook = new XSSFWorkbook(fis);
+//       3-Create object of XSSFWorksheet class
+//          XSSFSheet sheet = workbook.getSheetAt(0);
+//       4- Access a given row:
+//          XSSFRow row  = sheet .getRow(1);
+//       5-Access a given cell:
+//          XSSFCell cell = row.getCell(1);
+//          String value = cell.getStringCellValue();
+//        OR - Alternatively:
+//          String value = sheet .getRow(1).getCell(1).getStringCellValue();
+
+
     public static void setExcelFile(String Path, String SheetName) throws Exception {
         try {
             FileInputStream ExcelFile = new FileInputStream(Path);

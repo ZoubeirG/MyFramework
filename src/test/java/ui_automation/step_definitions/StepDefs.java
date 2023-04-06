@@ -9,18 +9,12 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import ui_automation.pages.DemoQAPage;
-import ui_automation.pages.MagentoPage;
-import ui_automation.pages.TheInternetHeroku;
-import ui_automation.pages.ToolTipPage;
-import ui_automation.utilities.ConfigurationReader;
-import ui_automation.utilities.Driver;
-import ui_automation.utilities.SelectHelper;
+import ui_automation.pages.*;
+import ui_automation.utilities.*;
 
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.function.DoubleToIntFunction;
 
 
 public class StepDefs {
@@ -34,13 +28,13 @@ public class StepDefs {
     Actions act = new Actions(Driver.getInstance().getDriver());
     ToolTipPage toolTipPage = new ToolTipPage();
     String mainGUID;
+    MealB mealB = new MealB();
 
 
     @Given("i am on the jquery site")
     public void i_am_on_the_jquery_site() {
         driver.get("https://jqueryui.com/tooltip/");
     }
-
 
     @Given("i hover over the age input box")
     public void i_hover_over_the_age_input_box() {
@@ -62,7 +56,7 @@ public class StepDefs {
     }
 
     @Then("user clicks the choose file tab and sends the location of the file")
-    public void user_clicks_the_choose_file_tab_and_sends_the_location_of_the_file() throws InterruptedException {
+    public void user_clicks_the_choose_file_tab_and_sends_the_location_of_the_file() {
         String filePath = "C:\\Selenium\\Projects\\MyFrameworkPractice\\src\\test\\resources\\testData\\fileUpload\\coolPDF.pdf";
         heroku.chooseFile.sendKeys(filePath);
     }
@@ -269,7 +263,6 @@ public class StepDefs {
         Assert.assertTrue("Alert not displayed", isAlertPresent);
     }
 
-
     @Then("i click on the iFrame tab")
     public void i_click_on_the_iFrame_tab() {
         heroku.iframesTab.click();
@@ -375,5 +368,53 @@ public class StepDefs {
         Assert.assertEquals("page error", title, driver.getTitle());
     }
 
+    @Given("i am logged on to the Meal B Practice page")
+    public void i_am_logged_on_to_the_Meal_B_Practice_page() {
+        driver.get(ConfigurationReader.getProperty("mealb.url"));
+        mealB.signInbutton.click();
+        mealB.usernameTextBox.sendKeys(ConfigurationReader.getProperty("mealb.username"));
+        mealB.passwordTextBox.sendKeys(ConfigurationReader.getProperty("mealb.password"));
+        mealB.loginButton.click();
+    }
+
+    @Given("i click on Expenses tab")
+    public void i_click_on_Expenses_tab() {
+        mealB.expensesTab.click();
+    }
+
+    @Then("i click on Add Expenses tab and select Meal & Entertainment for the drop down list")
+    public void i_click_on_Add_Expenses_tab_and_select_Meal_Entertainment_for_the_drop_down_list() {
+        mealB.addExpensesTab.click();
+        mealB.mealAndEntertainmentDopDownTab.click();
+        WaitHelper.waitForVisibility(mealB.modalWindow, 5);
+    }
+
+    @Then("i complete the Create Meal & Entertainment expense information")
+    public void i_complete_the_Create_Meal_Entertainment_expense_information() throws Exception {
+
+        String excelPath = System.getProperty("user.dir")+"/src/test/resources/testData/Keywords.xlsx";
+        ExcelUtility.setExcelFile(excelPath, "Sheet1");
+        Object expenseAmount = ExcelUtility.getCellData(3, 1);
+        Object expenseName = ExcelUtility.getCellData(3, 2);
+
+        mealB.completeExpenseModal((Double) expenseAmount, (String) expenseName);
+    }
+
+    @When("i click save button")
+    public void i_click_save_button() throws InterruptedException {
+        mealB.saveButton.click();
+    }
+
+    @Then("my newly added expense is displayed on table")
+    public void my_newly_added_expense_is_displayed_on_table() throws InterruptedException {
+        WaitHelper.wait(2);
+        String expense = mealB.expenseNameVerification.getText();
+        Assert.assertEquals("expense not saved", mealB.expenseName, expense);
+    }
+
 
 }
+
+
+
+
