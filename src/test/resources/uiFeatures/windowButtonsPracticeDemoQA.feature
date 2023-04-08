@@ -1,4 +1,5 @@
 Feature: Verify the window buttons are working as expected
+
 @windowButtonsPractice
   Scenario: Verify new window button feature
     Given user navigates to demoQA browser "browser-windows"page

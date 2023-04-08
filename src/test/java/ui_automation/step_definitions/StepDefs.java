@@ -29,7 +29,7 @@ public class StepDefs {
     ToolTipPage toolTipPage = new ToolTipPage();
     String mainGUID;
     MealB mealB = new MealB();
-
+    OhrmEmployeesPage hrmPage = new OhrmEmployeesPage();
 
     @Given("i am on the jquery site")
     public void i_am_on_the_jquery_site() {
@@ -361,6 +361,8 @@ public class StepDefs {
     @Then("user switch to original window")
     public void user_switch_to_original_window() {
         driver.switchTo().window(mainGUID);
+        String currentURL = driver.getCurrentUrl();
+        oLog.info("currentURL: " + currentURL);
     }
 
     @Then("user see the title of page as {string}")
@@ -392,7 +394,7 @@ public class StepDefs {
     @Then("i complete the Create Meal & Entertainment expense information")
     public void i_complete_the_Create_Meal_Entertainment_expense_information() throws Exception {
 
-        String excelPath = System.getProperty("user.dir")+"/src/test/resources/testData/Keywords.xlsx";
+        String excelPath = System.getProperty("user.dir") + "/src/test/resources/testData/Keywords.xlsx";
         ExcelUtility.setExcelFile(excelPath, "Sheet1");
         Object expenseAmount = ExcelUtility.getCellData(3, 1);
         Object expenseName = ExcelUtility.getCellData(3, 2);
@@ -410,6 +412,19 @@ public class StepDefs {
         WaitHelper.wait(2);
         String expense = mealB.expenseNameVerification.getText();
         Assert.assertEquals("expense not saved", mealB.expenseName, expense);
+    }
+
+    @Given("i click on the PIM tab")
+    public void i_click_on_the_PIM_tab() {
+
+        hrmPage.pImTab.click();
+    }
+
+    @Given("i click EmployeeList using JS Executor")
+    public void i_click_EmployeeList_using_JS_Executor() {
+        JavascriptExecutor executor = (JavascriptExecutor) driver;
+        executor.executeScript("arguments[0].click();", hrmPage.employeeTab);
+        WaitHelper.wait(3);
     }
 
 
