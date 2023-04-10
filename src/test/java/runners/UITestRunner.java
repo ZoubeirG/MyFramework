@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
         features="src/test/resources/uiFeatures",
         glue="ui_automation.step_definitions",
         dryRun = false,
-        tags="@jsExecutorPractice"
+        tags="@mealBVerifyDBAndUI"
 //        monochrome = true
 )
 

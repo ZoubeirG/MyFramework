@@ -9,4 +9,10 @@ Feature: User adds and validates expense
     When i click save button
     And my newly added expense is displayed on table
 
+  @mealBVerifyDBAndUI
+  Scenario: i should be able to verify UI data and DB data
+    Given i am logged on to the Meal B Practice page
+    And i click on Expenses tab
+    Then i should be able to verify UI and DB data
+
 

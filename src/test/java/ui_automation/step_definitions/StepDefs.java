@@ -11,7 +11,9 @@ import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ui_automation.pages.*;
 import ui_automation.utilities.*;
+import ui_automation.utilities.Driver;
 
+import java.sql.*;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -45,7 +47,7 @@ public class StepDefs {
     @Then("i should be able to see the tootTip box")
     public void i_should_be_able_to_see_the_tootTip_box() {
 
-        Boolean actualMessage = toolTipPage.ageDisclosure.isDisplayed();
+        boolean actualMessage = toolTipPage.ageDisclosure.isDisplayed();
         Assert.assertTrue("message not present", actualMessage);
     }
 
@@ -428,6 +430,23 @@ public class StepDefs {
     }
 
 
+    @Then("i should be able to verify UI and DB data")
+    public void iShouldBeAbleToVerifyUIAndDBData() throws ClassNotFoundException, SQLException {
+
+//        List <WebElement> expenseNames=driver.findElements(By.xpath("//*[@id='expenses-table']/tbody/tr/td[2]"));
+//        for (WebElement expenseName : expenseNames){oLog.info(expenseName.getText());}
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        String dbUrl = ConfigurationReader.getProperty("mb.database.url");
+        String dbUsername = ConfigurationReader.getProperty("mb.database.username");
+        String dbPassword = ConfigurationReader.getProperty("mb.database.password");
+
+        Connection connection = DriverManager.getConnection(dbUrl,dbUsername,dbPassword);
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("select * from EXPENSES");
+        oLog.info(resultSet.getRow());
+
+
+    }
 }
 
 
