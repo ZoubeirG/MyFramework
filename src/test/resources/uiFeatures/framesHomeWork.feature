@@ -1,3 +1,4 @@
+@regression
 Feature: Frame page verification
 @nestedFramesHomeWork
   Scenario: Verify available texts in a page

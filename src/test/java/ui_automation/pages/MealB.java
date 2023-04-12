@@ -6,6 +6,8 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import ui_automation.utilities.Driver;
 
+import java.util.List;
+
 public class MealB {
 
     @FindBy(xpath = "//*[@href='/Account/Login']")
@@ -44,11 +46,14 @@ public class MealB {
     @FindBy(css = ".btn.btn-primary.save-button.waves-effect")
     public WebElement saveButton;
 
-    @FindBy(xpath = "//*[@id='expenses-table']/tbody/tr[1]/td[2]")
-    public WebElement expenseNameVerification;
-    @FindBy(css = "#ExpenseEditForm")
+    @FindBy(xpath = "//*[@id='expenses-table']/tbody/tr/td[2]")
+    public List<WebElement> expenseNameVerification;
 
+    @FindBy(css = "#ExpenseEditForm")
     public WebElement modalWindow;
+
+    @FindBy(css = "#selectAllExpensesHeader")
+    public WebElement expenseSelectTab;
 
     WebDriver driver;
 

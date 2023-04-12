@@ -1,3 +1,4 @@
+@regression
 Feature: right click and select alert
 
   @rightClickPractice

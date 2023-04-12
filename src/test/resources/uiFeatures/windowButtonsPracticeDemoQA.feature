@@ -1,3 +1,4 @@
+@regression
 Feature: Verify the window buttons are working as expected
 
 @windowButtonsPractice

@@ -1,3 +1,4 @@
+@regression
 Feature: practice upload file automation
 
   @uploadFilePractice

@@ -1,5 +1,6 @@
 package ui_automation.step_definitions;
 
+import com.github.javafaker.Faker;
 import io.cucumber.java.en.*;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -14,14 +15,13 @@ import ui_automation.utilities.*;
 import ui_automation.utilities.Driver;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 
 public class StepDefs {
-
-
     private final Logger oLog = LogManager.getLogger(SelectHelper.class);
     WebDriver driver = Driver.getInstance().getDriver();
     DemoQAPage qaPage = new DemoQAPage();
@@ -35,6 +35,7 @@ public class StepDefs {
 
     @Given("i am on the jquery site")
     public void i_am_on_the_jquery_site() {
+        Driver.getInstance().getDriver();
         driver.get("https://jqueryui.com/tooltip/");
     }
 
@@ -219,7 +220,7 @@ public class StepDefs {
     @Then("user clicks the file to download")
     public void userClicksTheFileToDownload() throws InterruptedException {
         oLog.info("click a specific file to download  ");
-
+          // file download path
 //        WebDriverManager.chromedriver().setup();
 //        HashMap<String, Object> chromePath = new HashMap<String, Object>();
 //        chromePath.put("download.default_directory", System.getProperty("user.dir") + "src/test/resources/testData/downloads");
@@ -234,7 +235,7 @@ public class StepDefs {
 
     @Given("i am on site")
     public void i_am_on_site() {
-        driver.get(ConfigurationReader.getProperty("demoQaAlertsPage.url"));
+        driver.get(ConfigurationReader.getProperty("demoQaPage.url")+"alerts");
         oLog.info("navigated to site");
     }
 
@@ -243,14 +244,13 @@ public class StepDefs {
         qaPage.clickToSeeAlert.click();
         oLog.info("clicked the click button");
         boolean isAlertPresent = qaPage.clickToSeeAlert.isDisplayed();
-        Wait wait = new WebDriverWait(driver, 6);
-        wait.until(ExpectedConditions.alertIsPresent());
+        WaitHelper.waitForPageToLoad(6);
         Assert.assertTrue("Alert not displayed", isAlertPresent);
     }
 
     @Then("i switch to the alert and confirm it.")
     public void i_switch_to_the_alert_and_confirm_it() {
-        Wait wait = new WebDriverWait(driver, 6);
+        Wait<WebDriver> wait = new WebDriverWait(driver, 6);
         wait.until(ExpectedConditions.alertIsPresent());
         Alert alert = driver.switchTo().alert();
         oLog.info("switched to alert window");
@@ -395,25 +395,36 @@ public class StepDefs {
 
     @Then("i complete the Create Meal & Entertainment expense information")
     public void i_complete_the_Create_Meal_Entertainment_expense_information() throws Exception {
+        // using Excel sheet path
+//        String excelPath = System.getProperty("user.dir") + "/src/test/resources/testData/Keywords.xlsx";
+//        ExcelUtility.setExcelFile(excelPath, "Sheet1");
+//        Object expenseAmount = ExcelUtility.getCellData(2, 1);
+//        Object expenseName = ExcelUtility.getCellData(2, 2);
+//        mealB.completeExpenseModal((Double) expenseAmount, (String) expenseName);
+//         using faker class
+        Faker faker = new Faker();
+        double expenseAmount = faker.number().randomDouble(2,100,1000);
+        String expenseName = faker.funnyName().name();
+        mealB.completeExpenseModal(expenseAmount, expenseName);
 
-        String excelPath = System.getProperty("user.dir") + "/src/test/resources/testData/Keywords.xlsx";
-        ExcelUtility.setExcelFile(excelPath, "Sheet1");
-        Object expenseAmount = ExcelUtility.getCellData(3, 1);
-        Object expenseName = ExcelUtility.getCellData(3, 2);
 
-        mealB.completeExpenseModal((Double) expenseAmount, (String) expenseName);
     }
 
     @When("i click save button")
-    public void i_click_save_button() throws InterruptedException {
+    public void i_click_save_button()  {
         mealB.saveButton.click();
     }
 
     @Then("my newly added expense is displayed on table")
-    public void my_newly_added_expense_is_displayed_on_table() throws InterruptedException {
-        WaitHelper.wait(2);
-        String expense = mealB.expenseNameVerification.getText();
-        Assert.assertEquals("expense not saved", mealB.expenseName, expense);
+    public void my_newly_added_expense_is_displayed_on_table()  {
+        WaitHelper.waitForClickablility(mealB.expenseSelectTab,10);
+        List<String>  expenseNames = new ArrayList<>();
+        for (WebElement name : mealB.expenseNameVerification){
+            expenseNames.add(name.getText());
+
+        }
+
+        Assert.assertTrue("expense not added",expenseNames.contains(mealB.expenseName));
     }
 
     @Given("i click on the PIM tab")
@@ -433,17 +444,19 @@ public class StepDefs {
     @Then("i should be able to verify UI and DB data")
     public void iShouldBeAbleToVerifyUIAndDBData() throws ClassNotFoundException, SQLException {
 
-//        List <WebElement> expenseNames=driver.findElements(By.xpath("//*[@id='expenses-table']/tbody/tr/td[2]"));
-//        for (WebElement expenseName : expenseNames){oLog.info(expenseName.getText());}
+        List<WebElement> expenseNames = driver.findElements(By.xpath("//*[@id='expenses-table']/tbody/tr/td[2]"));
+        for (WebElement expenseName : expenseNames) {
+            oLog.info("UI " + expenseName.getText());
+        }
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         String dbUrl = ConfigurationReader.getProperty("mb.database.url");
         String dbUsername = ConfigurationReader.getProperty("mb.database.username");
         String dbPassword = ConfigurationReader.getProperty("mb.database.password");
 
-        Connection connection = DriverManager.getConnection(dbUrl,dbUsername,dbPassword);
+        Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery("select * from EXPENSES");
-        oLog.info(resultSet.getRow());
+        oLog.info("DB " + resultSet.getRow());
 
 
     }

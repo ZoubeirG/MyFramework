@@ -1,6 +1,7 @@
 package ui_automation.utilities;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.apache.commons.lang3.ObjectUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.chrome.ChromeDriver;
